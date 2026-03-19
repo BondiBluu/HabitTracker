@@ -41,3 +41,4 @@ C:\Users\bamid\Documents\HabitTracker\bin\Debug\net9.0\runtimes\win-x64\native\e
 C:\Users\bamid\Documents\HabitTracker\bin\Debug\net9.0\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\bamid\Documents\HabitTracker\obj\Debug\net9.0\HabitTracker.csproj.AssemblyReference.cache
 C:\Users\bamid\Documents\HabitTracker\obj\Debug\net9.0\HabitTra.1035CD52.Up2Date
+C:\Users\bamid\Documents\HabitTracker\obj\Debug\net9.0\HabitTracker.sourcelink.json

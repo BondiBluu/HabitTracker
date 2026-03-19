@@ -5,10 +5,13 @@ namespace HabitTracker
 {
     class Program
     {
+
+        //using a string to connect to the database (the string has information about the data source)
+        static string connectionString = @"Data Source=habit-Tracker.db";
+
         static void Main(string[] args)
         {
-            //using a string to connect to the database (the string has information about the data source)
-            string connectionString = @"Data Source=habit-Tracker.db";
+            
 
             //getting an instance of the sqlite connection class (providd by a library we'll bring in)
             using(var connection = new SqliteConnection(connectionString))
@@ -90,13 +93,27 @@ namespace HabitTracker
         {
             Console.WriteLine(@"Getting Records");
         }
+
+        //getting and inserting the values into the database
         private static void Insert()
         {
             
             string date = GetDateInput();
 
-            int quantity = GetNumberInput(@"\n\n Please insert number or glasses or other measure of your choice (no)
-            decimals allowed\n\n");
+            int quantity = GetNumberInput("\n\nPlease insert number or glasses or other measure of your choice (no) decimals allowed\n\n");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = 
+                    $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
         }
 
         //asking the user to put in the date in a certain format
@@ -115,9 +132,20 @@ namespace HabitTracker
             return dateInput;
         }
 
+        //typing a message and returning a number (used in Insert() and ---)
         internal static int GetNumberInput(string message)
         {
-            return 0;
+            Console.WriteLine(message);
+            string numberInput = Console.ReadLine();
+
+            if (numberInput == "0")
+            {
+                GetUserInput();
+            }
+
+            int finalInput = Convert.ToInt32(numberInput);
+
+            return finalInput;
         }
 
         static void Delete()
