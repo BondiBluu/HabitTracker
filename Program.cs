@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 
 namespace HabitTracker
 {
     class Program
     {
+        static string connectionString = @"Data Source=habit-Tracker.db";
 
         //using a string to connect to the database (the string has information about the data source)
-        static string connectionString = @"Data Source=habit-Tracker.db";
 
         static void Main(string[] args)
         {
@@ -89,9 +90,56 @@ namespace HabitTracker
             }
         }
 
+        //making a list of all the times user made a drinking water entry
         static void GetAllRecords()
         {
-            Console.WriteLine(@"Getting Records");
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = 
+                    $" SELECT * FROM drinking_water ";
+
+                //make a list of DrinkingWater to store the rows of the table
+                List<DrinkingWater> tableData = new();
+
+                //reading the data from the database
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                //if the reader has rows:
+                if (reader.HasRows)
+                {
+                    //while the reader reads the table rows 
+                    while (reader.Read())
+                    {
+                        //add a new DrinkingWater object to the DrinkingWater list(tableData)
+                        tableData.Add
+                    (
+                        //the data we're getting from the database
+                        new DrinkingWater
+                        {
+                           Id = reader.GetInt32(0),
+                           Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                           Quantity = reader.GetInt32(2)
+                        });
+                    }                    
+                }
+                else
+                {
+                    Console.WriteLine("No rows found.");
+                }
+                connection.Close();
+
+                Console.WriteLine("---------------------------------\n");
+
+                //grabbing and displaying the contents of the list
+                foreach(var dw in tableData)
+                {
+                    Console.WriteLine($"ID: {dw.Id}, Date: {dw.Date} Quantity: {dw.Quantity}");
+                }
+
+                Console.WriteLine("---------------------------------\n");
+            }
         }
 
         //getting and inserting the values into the database
@@ -159,4 +207,12 @@ namespace HabitTracker
 
 
     }
+}
+
+//DrinkingWater class
+public class DrinkingWater
+{
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
+    public int Quantity { get; set; }
 }
