@@ -223,9 +223,45 @@ namespace HabitTracker
                 connection.Close();
             }
         }
+        
+        //updating information about the selected item
         static void Update()
         {
-            Console.WriteLine(@"Updating Records");
+            Console.Clear();
+            GetAllRecords();
+
+            //get the id of the row they're trying to update
+            var recordId = GetNumberInput("\n\nType the Id of the record would like to update. Type 0 to return to the Main Menu.\n\n");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                //checking if the command even exists (checking the command and turning into an int. 0 is false)
+                var checkCmd = connection.CreateCommand();
+                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FRM drinking_water WHERE Id = {recordId})";
+                int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                if(checkQuery == 0)
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+                    connection.Close();
+                    Update();
+                }
+
+                //asking for the date and number they want
+                string date = GetDateInput();
+                int quantity = GetNumberInput("\n\nInsert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+
+                //making the command and updating the row 
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+            //get the number
         }
 
 
