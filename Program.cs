@@ -180,7 +180,7 @@ namespace HabitTracker
             return dateInput;
         }
 
-        //typing a message and returning a number (used in Insert() and ---)
+        //typing a message and returning a number (used in Insert() and Delete())
         internal static int GetNumberInput(string message)
         {
             Console.WriteLine(message);
@@ -198,7 +198,30 @@ namespace HabitTracker
 
         static void Delete()
         {
-            Console.WriteLine(@"Deleting Records");
+            Console.Clear();
+            //getting all records first, then asking which they want to delete
+            GetAllRecords();
+
+            var recordId = GetNumberInput("\n\nType the ID of the record you want to delete. Press 0 to return to the Main Menu.\n\n");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText= $"DELETE from drinking_water WHERE Id = '{recordId}'";
+
+                //execute command, return the row affected by that command
+                int rowCount = tableCmd.ExecuteNonQuery();
+
+                if(rowCount == 0)
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} does not exist. \n\n");
+                    Delete();
+                }
+                
+                connection.Close();
+            }
         }
         static void Update()
         {
