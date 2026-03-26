@@ -55,7 +55,7 @@ namespace HabitTracker
                 Console.WriteLine("\n\n Main Menu");
                 Console.WriteLine("\nWhat would you like to do?");
                 Console.WriteLine("\nType 0 to Close Application");
-                Console.WriteLine("\nType 1 to Veiw All Records");
+                Console.WriteLine("\nType 1 to View All Records");
                 Console.WriteLine("\nType 2 to Insert Record");
                 Console.WriteLine("\nType 3 to Delete Record");
                 Console.WriteLine("\nType 4 to Update Record");
@@ -176,6 +176,13 @@ namespace HabitTracker
             {
                 GetUserInput();
             }
+
+            //if the date isn't input correctly, tell them and have them try again
+            while(!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+            {
+                Console.Write("\n\nInvalid date. (Format: dd-mm-yy).\n\n");
+                dateInput = Console.ReadLine();
+            }
             
             return dateInput;
         }
@@ -239,7 +246,7 @@ namespace HabitTracker
 
                 //checking if the command even exists (checking the command and turning into an int. 0 is false)
                 var checkCmd = connection.CreateCommand();
-                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FRM drinking_water WHERE Id = {recordId})";
+                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
                 int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
                 if(checkQuery == 0)
