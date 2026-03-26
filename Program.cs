@@ -70,6 +70,7 @@ namespace HabitTracker
                         Console.WriteLine("\nGoodbye!\n");
                         Console.ReadLine();
                         closeApp = true;
+                        Environment.Exit(0);
                         break;
                     case "1":
                         GetAllRecords();
@@ -144,8 +145,7 @@ namespace HabitTracker
 
         //getting and inserting the values into the database
         private static void Insert()
-        {
-            
+        {            
             string date = GetDateInput();
 
             int quantity = GetNumberInput("\n\nPlease insert number or glasses or other measure of your choice (no) decimals allowed\n\n");
@@ -196,6 +196,12 @@ namespace HabitTracker
             if (numberInput == "0")
             {
                 GetUserInput();
+            }
+
+            while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
+            {
+                Console.WriteLine("\n\nInvalid number. Try again.\n\n");
+                numberInput = Console.ReadLine();
             }
 
             int finalInput = Convert.ToInt32(numberInput);
